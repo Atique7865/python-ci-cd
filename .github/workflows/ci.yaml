@@ -1,4 +1,4 @@
-name: Python CI-CD Pipeline  for testing
+name: Python CI-CD Pipeline
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
           pip install -r requirements.txt
           pip install flake8
 
-      - name: Run Linter
+      - name: Run Flake8
         run: flake8 .
 
   trivy-fs-scan:
@@ -38,46 +38,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Trivy FS Scan
+      - name: Run Trivy FS Scan
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
           scan-ref: .
 
-  build:
+  build-and-push:
     needs: trivy-fs-scan
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Build Docker Image
-        run: |
-          docker build -t ${{ env.IMAGE_NAME }}:${{ github.run_number }} .
-
-  image-scan:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Build Docker Image
-        run: |
-          docker build -t ${{ env.IMAGE_NAME }}:${{ github.run_number }} .
-
-      - name: Trivy Image Scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ env.IMAGE_NAME }}:${{ github.run_number }}
-          format: table
-          exit-code: 0
-          severity: HIGH,CRITICAL
-
-  push:
-    needs: image-scan
     runs-on: ubuntu-latest
 
     steps:
@@ -93,6 +61,14 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/python-ci-cd:${{ github.run_number }} .
+
+      - name: Trivy Image Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/python-ci-cd:${{ github.run_number }}
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: '0'
 
       - name: Push Docker Image
         run: |
