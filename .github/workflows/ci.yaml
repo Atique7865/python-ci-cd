@@ -6,19 +6,13 @@ on:
       - main
       - dev
 
-env:
-  IMAGE_NAME: python-ci-cd
-
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -31,12 +25,11 @@ jobs:
         run: flake8 .
 
   trivy-fs-scan:
-    needs: lint
+    needs: [lint]
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Run Trivy FS Scan
         uses: aquasecurity/trivy-action@master
@@ -44,32 +37,53 @@ jobs:
           scan-type: fs
           scan-ref: .
 
-  build-and-push:
-    needs: trivy-fs-scan
+  build:
+    needs: [trivy-fs-scan]
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Docker Login
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PAT }}
+      - uses: actions/checkout@v4
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/python-ci-cd:${{ github.run_number }} .
+          docker build -t python-ci-cd:${{ github.run_number }} .
+
+  image-scan:
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build -t python-ci-cd:${{ github.run_number }} .
 
       - name: Trivy Image Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/python-ci-cd:${{ github.run_number }}
+          image-ref: python-ci-cd:${{ github.run_number }}
           format: table
           severity: HIGH,CRITICAL
           exit-code: '0'
 
+  push:
+    needs: [image-scan]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: atique123
+          password: ${{ secrets.DOCKERHUB_PAT }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t atique123/python-ci-cd:${{ github.run_number }} .
+
       - name: Push Docker Image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/python-ci-cd:${{ github.run_number }}
+          docker push atique123/python-ci-cd:${{ github.run_number }}
