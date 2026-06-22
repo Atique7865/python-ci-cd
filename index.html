@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aurora Calculator</title>
+    <link rel="stylesheet" href="static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="calculator" aria-label="Calculator application">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Aurora</p>
+            <h1>Calculator</h1>
+          </div>
+          <div class="actions" aria-label="Calculator controls">
+            <button class="icon-button" type="button" data-action="theme" aria-label="Switch theme" title="Switch theme">
+              <span aria-hidden="true">◐</span>
+            </button>
+            <button class="icon-button" type="button" data-action="copy" aria-label="Copy result" title="Copy result">
+              <span aria-hidden="true">⧉</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="display" aria-live="polite">
+          <div class="memory-row">
+            <span id="modeLabel">Standard</span>
+            <span id="memoryLabel">M: 0</span>
+          </div>
+          <div id="expression" class="expression">0</div>
+          <output id="result" class="result">0</output>
+        </div>
+
+        <nav class="tabs" aria-label="Calculator mode">
+          <button class="tab active" type="button" data-mode="standard">Standard</button>
+          <button class="tab" type="button" data-mode="scientific">Scientific</button>
+        </nav>
+
+        <section class="keypad" aria-label="Calculator keys">
+          <button type="button" class="key utility" data-action="memory-clear">MC</button>
+          <button type="button" class="key utility" data-action="memory-recall">MR</button>
+          <button type="button" class="key utility" data-action="memory-add">M+</button>
+          <button type="button" class="key utility" data-action="memory-subtract">M-</button>
+          <button type="button" class="key utility scientific-key" data-value="sin(">sin</button>
+          <button type="button" class="key utility scientific-key" data-value="cos(">cos</button>
+          <button type="button" class="key utility scientific-key" data-value="tan(">tan</button>
+          <button type="button" class="key utility scientific-key" data-value="sqrt(">√</button>
+
+          <button type="button" class="key danger" data-action="clear">AC</button>
+          <button type="button" class="key utility" data-action="delete">⌫</button>
+          <button type="button" class="key utility" data-value="%">%</button>
+          <button type="button" class="key operator" data-value="/">÷</button>
+          <button type="button" class="key utility scientific-key" data-value="log(">log</button>
+          <button type="button" class="key utility scientific-key" data-value="ln(">ln</button>
+          <button type="button" class="key utility scientific-key" data-value="pi">π</button>
+          <button type="button" class="key utility scientific-key" data-value="e">e</button>
+
+          <button type="button" class="key number" data-value="7">7</button>
+          <button type="button" class="key number" data-value="8">8</button>
+          <button type="button" class="key number" data-value="9">9</button>
+          <button type="button" class="key operator" data-value="*">×</button>
+          <button type="button" class="key utility scientific-key" data-value="(">(</button>
+          <button type="button" class="key utility scientific-key" data-value=")">)</button>
+          <button type="button" class="key utility scientific-key" data-value="^">xʸ</button>
+          <button type="button" class="key utility scientific-key" data-action="factorial">x!</button>
+
+          <button type="button" class="key number" data-value="4">4</button>
+          <button type="button" class="key number" data-value="5">5</button>
+          <button type="button" class="key number" data-value="6">6</button>
+          <button type="button" class="key operator" data-value="-">−</button>
+          <button type="button" class="key utility scientific-key" data-value="asin(">asin</button>
+          <button type="button" class="key utility scientific-key" data-value="acos(">acos</button>
+          <button type="button" class="key utility scientific-key" data-value="atan(">atan</button>
+          <button type="button" class="key utility scientific-key" data-action="square">x²</button>
+
+          <button type="button" class="key number" data-value="1">1</button>
+          <button type="button" class="key number" data-value="2">2</button>
+          <button type="button" class="key number" data-value="3">3</button>
+          <button type="button" class="key operator" data-value="+">+</button>
+          <button type="button" class="key utility scientific-key" data-action="inverse">1/x</button>
+          <button type="button" class="key utility scientific-key" data-value="abs(">abs</button>
+          <button type="button" class="key utility scientific-key" data-action="negate">±</button>
+          <button type="button" class="key equals scientific-key" data-action="equals">=</button>
+
+          <button type="button" class="key number zero" data-value="0">0</button>
+          <button type="button" class="key number" data-value=".">.</button>
+          <button type="button" class="key equals standard-equals" data-action="equals">=</button>
+        </section>
+      </section>
+
+      <aside class="history-panel" aria-label="Calculation history">
+        <div class="history-header">
+          <div>
+            <p class="eyebrow">Recent</p>
+            <h2>History</h2>
+          </div>
+          <button type="button" class="text-button" data-action="clear-history">Clear</button>
+        </div>
+        <ol id="historyList" class="history-list"></ol>
+      </aside>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="static/app.js"></script>
+  </body>
+</html>
