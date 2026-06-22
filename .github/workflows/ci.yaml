@@ -1,4 +1,4 @@
-name: Python CI-CD Pipeline
+name: Python CI-CD Pipeline new
 
 on:
   push:
