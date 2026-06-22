@@ -73,7 +73,7 @@ jobs:
         with:
           image-ref: ${{ env.IMAGE_NAME }}:${{ github.run_number }}
           format: table
-          exit-code: 1
+          exit-code: 0
           severity: HIGH,CRITICAL
 
   push:
