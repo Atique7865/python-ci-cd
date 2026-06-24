@@ -19,7 +19,7 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 COPY --from=builder /app /app
 
-EXPOSE 5000
+EXPOSE 8000
 
 USER nonroot:nonroot
 
